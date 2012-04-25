@@ -34,6 +34,7 @@ public class Menu {
             user = auth.checkUser(username, password);
             return true;
         } catch (InvalidLogin e){
+            output.out("Invalid login.");
             return false;
         }
     }
