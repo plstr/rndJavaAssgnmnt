@@ -1,12 +1,13 @@
 package Users;
 
 import Exceptions.InvalidLogin;
+import java.util.Map;
 import java.util.HashMap;
 
 public class Authentication {
     // Authentication functionality. Email == username
     //init the lists.. hardcoded :(
-    private HashMap<String, String> passwd;
+    private Map passwd = new HashMap<String, String>();
     private String[] userDB = new String[]{
         // uid, password, name, email, address, accn_type
             "M000001;1234;John Doe;john.doe@somedomain.com;RMIT University, GPO Box 2476 Melbourne VIC 3001,Australia;standard",
@@ -26,7 +27,7 @@ public class Authentication {
     public User instantiateUser(String username) throws InvalidLogin{
         for(String each : userDB){
             String[] user = each.split(";");
-            if(user[0].contentEquals(username)){
+            if(user[3].contentEquals(username)){
                 if(user[0].contains("A")){
                     return new Admin(user[0], // userid
                             user[1], // password

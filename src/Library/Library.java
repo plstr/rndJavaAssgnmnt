@@ -1,5 +1,6 @@
 package Library;
 
+import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 
@@ -19,8 +20,8 @@ public class Library {
     };
 
     // init stores
-    private HashMap<String, DigitalMovie> digiMovieLibrary;
-    private HashMap<String, PhysicalMovie> phyMovieLibrary;
+    private Map digiMovieLibrary = new HashMap<String, DigitalMovie>();
+    private Map phyMovieLibrary = new HashMap<String, PhysicalMovie>();
 
     public Library() {
         // Repos of all the movies

@@ -17,8 +17,9 @@ public class Menu {
     private Output output = new Output();
     
     public Menu(){
-        while(authenticated){
-            authenticated = this.login();
+        output.out("Hi...");
+        while(!authenticated){
+            this.authenticated = this.login();
         }
         initMenu();
     }
@@ -30,7 +31,7 @@ public class Menu {
         username = input.getString("E-mail");
         password = input.getString("Password");
         try {
-            auth.checkUser(username, password);
+            user = auth.checkUser(username, password);
             return true;
         } catch (InvalidLogin e){
             return false;

@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class Input{
     private Output output = new Output();
     public String getString(String message){
-        output.outInline(message);
+        output.outInline(message + " >");
         Scanner scanner = new Scanner(System.in);
         return scanner.next();
     }
