@@ -2,25 +2,25 @@ package Library;
 
 public class Movie {
     // define movie variables
-    private String mvID;
     private String title;
     private String director;
     private String genre;
     private int year;
     private int length;
-    private String status;
-    private String[] cast;
+    private String cast;
+    private Boolean rent;
+    private Boolean buy;
     
-    public Movie (String mvID, String title, String director, String genre,
-           int year, int length, String status, String[] cast) {
-        this.mvID = mvID;
+    public Movie (String title, String director, String genre,
+           int year, int length, String cast, Boolean rent, Boolean buy) {
         this.title = title;
         this.director = director;
         this.genre = genre;
         this.year = year;
         this.length = length;
-        this.status = status;
         this.cast = cast;
+        this.rent = rent;
+        this.buy = buy;
     }
     
     public String printAllValues(){

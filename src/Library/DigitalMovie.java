@@ -5,18 +5,16 @@ package Library;
  */
 public class DigitalMovie extends Movie {
     // extra variables
-    private boolean rentable;
-    private boolean purchasable;
+    private String mvID;
     private String fileFormat;
     private int fileSize;
 
     public DigitalMovie(String mvID, String title, String director,
-                        String genre, int year, int length, String status,
-                        String[] cast, boolean rentable, boolean purchasable,
-                        String fileFormat, int fileSize){
-        super(mvID, title, director, genre, year, length, status, cast);
-        this.rentable = rentable;
-        this.purchasable = purchasable;
+                        String genre, int year, int length, String cast,
+                        int fileSize, String fileFormat, boolean rent,
+                        boolean buy){
+        super(title, director, genre, year, length, cast, rent, buy);
+        this.mvID = mvID;
         this.fileFormat = fileFormat;
         this.fileSize = fileSize;
     }
@@ -29,23 +27,7 @@ public class DigitalMovie extends Movie {
         return fileSize;
     }
 
-    public String getStatus(){
-        if(this.checkBuy() && this.checkRent()){
-            return " (buy | rent)";
-        } else if (this.checkBuy() && !(this.checkRent())){
-            return " (buy only)";
-        } else if (this.checkRent() && !(this.checkBuy())){
-            return " (rent only)";
-        } else {
-            return " (Not available)";
-        }
-    }
-
-    public boolean checkRent(){
-        return rentable;
-    }
-
-    public boolean checkBuy(){
-        return purchasable;
+    public void getStatus(){
+        // implement
     }
 }
