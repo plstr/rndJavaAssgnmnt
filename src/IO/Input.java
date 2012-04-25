@@ -4,9 +4,9 @@ import Exceptions.InvalidInput;
 import java.util.Scanner;
 
 public class Input{
-
+    private Output output = new Output();
     public String getString(String message){
-        IO.Output.outInline(message);
+        output.outInline(message);
         Scanner scanner = new Scanner(System.in);
         return scanner.next();
     }
@@ -17,6 +17,10 @@ public class Input{
 
     public Integer getInt() throws Exception{
         return toInt(this.getString());
+    }
+
+    public Integer getInt(String message) throws Exception{
+        return toInt(this.getString(message));
     }
 
     public Integer toInt(String input) throws InvalidInput{
@@ -35,7 +39,7 @@ public class Input{
 
     public void getNothing(){
         Scanner scanner = new Scanner(System.in);
-        Output.outInline("> Press enter to continue.");
+        output.outInline("> Press enter to continue.");
         scanner.nextLine();
     }
 

@@ -3,11 +3,11 @@ import IO.*;
 public class Access {
     public boolean Authenticate(){
         Input input = new Input();
+        Output output = new Output();
         boolean success = false;
-        Output.out("Please login");
-        Output.outInline("Username >");
+        output.out("Please login");
         // put back the optional message input on Input methods, 2 constructors
-        input.getString();
+        input.getString("Username");
         return success;
     }
 }

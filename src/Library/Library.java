@@ -19,14 +19,14 @@ public class Library {
     };
 
     // init stores
-    private HashMap digiMovieLibrary;
-    private HashMap phyMovieLibrary;
+    private HashMap<String, DigitalMovie> digiMovieLibrary;
+    private HashMap<String, PhysicalMovie> phyMovieLibrary;
 
     public Library() {
         // Repos of all the movies
         for (String each : digiMovieList){
             String[] eachMovie = each.split(";");
-            digiMovieLibrary.put(eachMovie[0], new DigitalMovie(eachMovie[0],  // ID
+            digiMovieLibrary.put(eachMovie[0], new DigitalMovie(eachMovie[0],
                     eachMovie[1], // Title
                     eachMovie[2], // Director
                     eachMovie[3], // Genre
@@ -42,7 +42,7 @@ public class Library {
 
         for (String each : phyMovieList){
             String[] eachMovie = each.split(";");
-            phyMovieLibrary.put(eachMovie[0], new PhysicalMovie(eachMovie[0], // Barcode
+            this.phyMovieLibrary.put(eachMovie[0], new PhysicalMovie(eachMovie[0], // Barcode
                     eachMovie[1], // Title
                     eachMovie[2], // Director
                     eachMovie[3], // Genre

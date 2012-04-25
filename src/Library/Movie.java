@@ -1,6 +1,6 @@
 package Library;
 
-public class Movie {
+public abstract class Movie {
     // define movie variables
     private String title;
     private String director;
@@ -28,6 +28,14 @@ public class Movie {
                + director + "\t "
                + genre + "\t "
                + year;
+    }
+
+    public boolean rentable(){
+        return this.rent;
+    }
+
+    public boolean purchasable(){
+        return this.buy;
     }
 
     public String getTitle(){
