@@ -9,6 +9,7 @@ public class Cart {
     private HashMap<DigitalMovie, String> digitalItems;
     private HashMap<PhysicalMovie, String> physicalItems;
     // cart variables
+    private Member currentUser;
     private final double purchaseCost = 17.0;
     private final double rentalCost = 5.0;
     private final double lateFee = 1.0;
@@ -19,6 +20,10 @@ public class Cart {
     private double purchaseDiscount = 0.0;
     private double shippingDiscount = 0.0;
     private double cartTotal = 0.0;
+
+    public Cart(Member user){
+        this.currentUser = user;
+    }
 
     public HashMap getAllItems(){
         HashMap<Movie, String> allItems = new HashMap();
@@ -104,10 +109,10 @@ public class Cart {
     }
 
     public void checkout() throws InsufficientCredit{
-        if(this.cartTotal > user.getAvailableFunds()){
+        if(this.cartTotal > currentUser.getCredit()){
             throw new InsufficientCredit();
         } else {
-            user.deductCredit(this.cartTotal);
+            currentUser.deductCredit(this.cartTotal);
         }
     }
 }
