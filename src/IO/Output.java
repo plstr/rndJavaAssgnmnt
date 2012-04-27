@@ -14,6 +14,6 @@ public class Output {
     }
 
     public void line(){
-        System.out.print("-------------------------------");
+        System.out.println("-------------------------------");
     }
 }
