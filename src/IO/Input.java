@@ -23,6 +23,14 @@ public class Input{
         return toInt(this.getString(message));
     }
 
+    public Double getDouble() throws Exception{
+        return toDouble(this.getString());
+    }
+
+    public Double getDouble(String message) throws Exception{
+        return toDouble(this.getString(message));
+    }
+
     public Integer toInt(String input) throws InvalidInput{
         try{
             if(Integer.parseInt(input) < 0){
@@ -30,6 +38,20 @@ public class Input{
             }
             else {
                 return Integer.parseInt(input);
+            }
+        }
+        catch (Exception e){
+            throw new InvalidInput();
+        }
+    }
+
+    public Double toDouble(String input) throws InvalidInput{
+        try{
+            if(Double.parseDouble(input) < 0){
+                throw new InvalidInput();
+            }
+            else {
+                return Double.parseDouble(input);
             }
         }
         catch (Exception e){

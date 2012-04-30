@@ -20,28 +20,16 @@ public abstract class User {
         this.address = address;
     }
 
-    public void setPassword(String newPassword) throws NonUniqueInput{
-        if(this.password.equals(newPassword)){
-            throw new NonUniqueInput();
-        } else {
-            this.password = newPassword;
-        }
+    public void setPassword(String newPassword){
+        this.password = newPassword;
     }
 
-    public void setEmail(String newEmail) throws NonUniqueInput{
-        if(this.email.equals(newEmail)){
-            throw new NonUniqueInput();
-        } else {
-            this.email = newEmail;
-        }
+    public void setEmail(String newEmail){
+        this.email = newEmail;
     }
 
-    public void setAddress(String newAddress) throws NonUniqueInput{
-        if(this.address.equals(newAddress)){
-            throw new NonUniqueInput();
-        } else {
-            this.address = newAddress;
-        }
+    public void setAddress(String newAddress){
+        this.address = newAddress;
     }
 
     public Map<String, String> getUserInfo(){

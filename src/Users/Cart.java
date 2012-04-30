@@ -68,7 +68,7 @@ public class Cart {
         return this.totalShippingCost;
     }
 
-    public double getRentalCost(){
+    public double getPhyRentalCost(){
         double total = 0.0;
         for(PhysicalMovie each : physicalItems.keySet()){
             if(physicalItems.get(each).equals("rent")){
@@ -78,7 +78,7 @@ public class Cart {
         return total;
     }
 
-    public double getPurchaseCost(){
+    public double getPhyPurchaseCost(){
         double total = 0.0;
         for(PhysicalMovie each : physicalItems.keySet()){
             if(physicalItems.get(each).equals("buy")){
@@ -88,10 +88,30 @@ public class Cart {
         return total;
     }
 
+    public double getDigiRentalCost(){
+        double total = 0.0;
+        for(DigitalMovie each : digitalItems.keySet()){
+            if(digitalItems.get(each).equals("rent")){
+                total += rentalCost;
+            }
+        }
+        return total;
+    }
+
+    public double getDigiPurchaseCost(){
+        double total = 0.0;
+        for(DigitalMovie each : digitalItems.keySet()){
+            if(digitalItems.get(each).equals("buy")){
+                total += purchaseCost;
+            }
+        }
+        return total;
+    }
+
     public double getTotalCost(){
         double total = 0.0;
-        total += getPurchaseCost();
-        total += getRentalCost();
+        total += getPhyPurchaseCost();
+        total += getPhyRentalCost();
         total += getTotalShippingCost();
         this.cartTotal = total;
 
@@ -108,11 +128,18 @@ public class Cart {
         }
     }
 
+    public void removeAllItems(){
+        this.digitalItems.clear();
+        this.physicalItems.clear();
+    }
+
     public void checkout() throws InsufficientCredit{
         if(this.cartTotal > currentUser.getCredit()){
             throw new InsufficientCredit();
         } else {
             currentUser.deductCredit(this.cartTotal);
+            // Push to history cart for reference by addToCart function
+            // push to accounting
         }
     }
 }
