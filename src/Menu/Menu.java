@@ -1,13 +1,14 @@
 package Menu;
 
 import Exceptions.InsufficientCredit;
+import Exceptions.InvalidInput;
 import Exceptions.InvalidLogin;
 import Library.*;
 import Users.*;
 import IO.*;
 
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.Map;
 
 public class Menu {
     // init system instances.
@@ -15,10 +16,13 @@ public class Menu {
     private Authentication auth = new Authentication();
     private Accounting systemAccount = new Accounting();
     private User user;
-    private Cart userCart;
+    private Member member;
+    Cart userCart;
     private boolean authenticated = false;
-    private Input input = new Input();
-    private Output output = new Output();
+    Input input = new Input();
+    Output output = new Output();
+
+    private ArrayList<Movie> tempResults = new ArrayList<Movie>();
     
     public Menu(){
         output.out("Initialising...");
@@ -28,11 +32,17 @@ public class Menu {
         if(this.user instanceof Admin){
             this.initMenu("admin");
         } else {
+            this.member = (Member)this.user;
+            if(this.user instanceof PremiumMember){
+                this.userCart = new PremiumCart((Member) user);
+            }else{
+                this.userCart = new Cart((Member) user);
+            }
             this.initMenu("");
         }
     }
 
-    public boolean login(){
+    private boolean login(){
         String username;
         String password;
         output.out("Please login:");
@@ -54,49 +64,30 @@ public class Menu {
     private void initMenu(String userType) {
         // main menu loop
         if(userType.equals("admin")){
-            while (true){
-                Integer input = adminMenu();
-                switch(input){
-                    case 1:
-                        //                    buyMenu();
-                        break;
-                    case 2:
-                        //                    rentMenu();
-                        break;
-                    case 3:
-                        //                    listPurchases();
-                        break;
-                    case 4:
-                        //listRentals();
-                        break;
-                    case 0:
-                        output.out("Thank you.");
-                        System.exit(0);
-                    default:
-                        output.outInline("Please select from the menu.");
-                }
-            }
+            AdminMenu adminMenu = new AdminMenu();
+            adminMenu.initMenu();
+
         } else {
             while(true){
                 Integer input = mainMenu();
                 switch(input){
                     case 1:
-    //                    digiRent();
+                        this.digiRent();
                         break;
                     case 2:
-    //                    digiBuy();
+                        this.digiBuy();
                         break;
                     case 3:
-    //                    DVD_Rent();
+                        this.DVD_Rent();
                         break;
                     case 4:
-//                        DVD_Buy();
+                        this.DVD_Buy();
                         break;
                     case 5:
-//                        shoppingCart();
+                        this.shoppingCart();
                         break;
                     case 6:
-//                        myAccount ();
+                        this.myAccount();
                         break;
                     case 0:
                         output.out("Thank you.");
@@ -122,32 +113,195 @@ public class Menu {
         try {
             return input.getInt("Please enter selection");
         } catch (Exception e) {
-            return 0;
+            output.out("Invalid input. Please try again.");
+            return -1;
+
         }
     }
 
-    private Integer adminMenu() {
-        // admin menu
-        this.menuTitle("VixFix Store Admin Console: ");
-        output.out("(1). Edit Movies");
-        output.out("(2). Edit Users");
-        output.out("(3). Collect Membership Fee");
-        output.out("(4). Rentals View & Return");
-        output.out("(5). View Store Statistics");
-        output.out("(6). Edit Store Settings");
-        output.out("(0). Exit");
-        output.blankLine();
-        try {
-            return input.getInt("Please enter selection");
-        } catch (Exception e) {
-            return 0;
-        }
-    }
 
-    private void menuTitle(String title){
+
+    void menuTitle(String title){
         output.line();
         output.out(title);
         output.line();
+    }
+
+    private void shoppingCart(){
+        this.menuTitle("My shopping cart | VixFix Store");
+        output.out("[Digital movies]");
+        output.line();
+        if(userCart.getDigitalItems().keySet().size() > 0){
+            int count = 1;
+            for(Object each : userCart.getDigitalItems().keySet()){
+                if(userCart.getDigitalItems().get(each).equals("rent")){
+                    output.out(count++ + " " + each.toString() + ": " + userCart.constRentalCost());
+                } else {
+                    output.out(userCart.getDigitalItems().get(each).toString());
+                }
+            }
+            output.out("Digital total: ");
+        } else {
+            output.out("No digital items in cart.");
+        }
+        output.out("[DVD movies]");
+        output.line();
+        if(userCart.getPhysicalItems().keySet().size() > 0){
+            int count = 1;
+            for(Object each : userCart.getPhysicalItems().keySet()){
+                output.out(count++ + " " + each.toString() + ": " + userCart.constPurchaseCost());
+            }
+        } else {
+            output.out("No DVD titles items in cart.");
+        }
+
+        Integer selection = 9;
+        output.out("(1). Checkout cart");
+        output.out("(2). Remove a digital item");
+        output.out("(3). Remove a DVD item");
+        output.out("(4). Reset cart");
+        output.out("(0). Exit");
+        while(selection != 0){
+            try {
+                selection = input.getInt("Please enter selection");
+            } catch (Exception e) {
+                output.out("Invalid input. Please try again.");
+                selection = -1;
+            }
+            switch(selection){
+                case 1:
+                    this.checkOut();
+                    break;
+                case 2:
+                    this.cartRemoveDigi();
+                    break;
+                case 3:
+//                    this.cartRemoveDVD();
+                    break;
+                case 4:
+//                    this.cartReset();
+                    break;
+                case 0:
+                    break;
+                default:
+                    output.outInline("Please select from the menu.");
+            }
+        }
+    }
+
+    public void cartRemoveDigi(){
+        if(userCart.getDigitalItems().size() > 0){
+            int selection = Integer.MAX_VALUE;
+            while(!(selection <= userCart.getDigitalItems().size())){
+                try {
+                    selection = input.getInt("Please select item to remove");
+                } catch (Exception e) {
+                    output.out("Invalid input. Please try again.");
+                    selection = -1;
+                }
+//                userCart.removeItem(userCart.getDigitalItems().keySet()[select]);
+            }
+
+
+        } else {
+            output.out("No digital items in cart.");
+        }
+    }
+
+    private void digiRent(){
+        String search;
+        search = input.getString("Search for movie title");
+        this.tempResults = library.getDigiMovies(search, "rent");
+        if(tempResults.size() > 0){
+            int counter = 1;
+            int selection = Integer.MAX_VALUE;
+            for(Movie each : tempResults){
+                output.out("(" + counter++ + ") " + each.getTitle());
+            }
+            while(!(selection <= tempResults.size() - 1)){
+                try{
+                    selection = input.getInt("Select digital title you wish to rent");
+                } catch (InvalidInput e){
+                    output.out("Invalid selection.");
+                }
+            }
+            userCart.addDigitalItem((DigitalMovie)tempResults.get(selection), "rent");
+            output.out("\"" + tempResults.get(selection).getTitle() + "\" added to cart");
+        } else{
+            output.out("No matching movies found. :(");
+        }
+    }
+
+    private void digiBuy(){
+        String search;
+        search = input.getString("Search for movie title");
+        this.tempResults = library.getDigiMovies(search, "buy");
+        if(tempResults.size() > 0){
+            int counter = 1;
+            int selection = Integer.MAX_VALUE;
+            for(Movie each : tempResults){
+                output.out("(" + counter++ + ") " + each.getTitle());
+            }
+            while(!(selection <= tempResults.size() - 1)){
+                try{
+                    selection = input.getInt("Select digital title you wish to purchase");
+                } catch (InvalidInput e){
+                    output.out("Invalid selection.");
+                }
+            }
+            userCart.addDigitalItem((DigitalMovie)tempResults.get(selection), "buy");
+            output.out("\"" + tempResults.get(selection).getTitle() + "\" added to cart");
+        } else{
+            output.out("No matching movies found. :(");
+        }
+    }
+
+    private void DVD_Rent(){
+        String search;
+        search = input.getString("Search for movie title");
+        this.tempResults = library.getPhyMovies(search, "rent");
+        if(tempResults.size() > 0){
+            int counter = 1;
+            int selection = Integer.MAX_VALUE;
+            for(Movie each : tempResults){
+                output.out("(" + counter++ + ") " + each.getTitle());
+            }
+            while(!(selection <= tempResults.size() - 1)){
+                try{
+                    selection = input.getInt("Select DVD title you wish to rent");
+                } catch (InvalidInput e){
+                    output.out("Invalid selection.");
+                }
+            }
+            userCart.addItem(tempResults.get(selection), "rent");
+            output.out("\"" + tempResults.get(selection).getTitle() + "\" added to cart");
+        } else{
+            output.out("No matching movies found. :(");
+        }
+    }
+
+    private void DVD_Buy(){
+        String search;
+        search = input.getString("Search for movie title");
+        this.tempResults = library.getPhyMovies(search, "buy");
+        if(tempResults.size() > 0){
+            int counter = 1;
+            int selection = Integer.MAX_VALUE;
+            for(Movie each : tempResults){
+                output.out("(" + counter++ + ") " + each.getTitle());
+            }
+            while(!(selection <= tempResults.size() - 1)){
+                try{
+                    selection = input.getInt("Select DVD title you wish to purchase");
+                } catch (InvalidInput e){
+                    output.out("Invalid selection.");
+                }
+            }
+            userCart.addItem(tempResults.get(selection), "buy");
+            output.out("\"" + tempResults.get(selection).getTitle() + "\" added to cart");
+        } else{
+            output.out("No matching movies found. :(");
+        }
     }
 
     public void checkOut(){
@@ -174,14 +328,86 @@ public class Menu {
     }
 
     public void myAccount(){
+        Integer selection = 9;
         this.menuTitle("My account | VixFix Store");
+        output.out("[Account info]");
+        output.out("Full name: " + member.getUserInfo().get("fullname"));
+        output.out("Account ID: " + member.getUserInfo().get("username"));
+        output.out("E-mail: " + member.getUserInfo().get("email"));
+        output.out("Postal address: " + member.getUserInfo().get("address"));
+        output.line();
         output.out("(1). View current rentals");
-        output.out("(3). Return digital rentals");
+        output.out("(2). Return digital rentals");
         output.out("(3). View rental history");
-        output.out("(2). View purchase history");
-        output.out("(4). Add credit");
-        output.out("(5). Edit account details");
+        output.out("(4). View purchase history");
+        output.out("(5). Add credit");
+        output.out("(6). Edit account details");
         output.out("(0). Exit");
+
+        while(selection != 0){
+            try {
+                selection = input.getInt("Please enter selection");
+            } catch (Exception e) {
+                output.out("Invalid input. Please try again.");
+                selection = -1;
+            }
+            switch(selection){
+                case 1:
+                    this.viewAllRentals();
+                    break;
+                case 2:
+                    this.returnDigitalRentals();
+                    break;
+                case 3:
+                    this.viewRentalHistory();
+                    break;
+                case 4:
+                    this.viewPurchaseHistory();
+                    break;
+                case 5:
+                    this.addCredit();
+                    break;
+                case 6:
+                    this.editAccountDetails();
+                    break;
+                case 0:
+                    break;
+                default:
+                    output.outInline("Please select from the menu.");
+            }
+        }
+    }
+
+    public void editAccountDetails(){
+        Integer selection = 9;
+        this.menuTitle("Edit account details | My account | VixFix Store");
+        output.out("(1). Change your password");
+        output.out("(2). Change your postal address");
+        output.out("(3). Change your e-email address");
+        output.out("(0). Exit");
+        while(selection != 0){
+            try {
+                selection = input.getInt("Please enter selection");
+            } catch (Exception e) {
+                output.out("Invalid input. Please try again.");
+                selection = -1;
+            }
+            switch(selection){
+                case 1:
+                    this.editPassword();
+                    break;
+                case 2:
+                    this.editAddress();
+                    break;
+                case 3:
+                    this.editEmail();
+                    break;
+                case 0:
+                    break;
+                default:
+                    output.outInline("Please select from the menu.");
+            }
+        }
     }
 
     public void viewAllRentals(){
@@ -212,8 +438,8 @@ public class Menu {
 
     public void viewPurchaseHistory(){
         this.menuTitle("Purchase history | My account | VixFix Store");
-        if(user.getPurchaseHistory.keySet().size() > 0){
-            for(Object each : user.getPurchaseHistory.keySet()){
+        if(member.getPurchaseHistory().keySet().size() > 0){
+            for(Object each : member.getPurchaseHistory().keySet()){
                 output.out(each.toString());
             }
         } else {
@@ -223,8 +449,8 @@ public class Menu {
 
     public void viewRentalHistory(){
         this.menuTitle("Rental history | My account | VixFix Store");
-        if(user.getRentalHistory.keySet().size() > 0){
-            for(Object each : user.getRentalHistory.keySet()){
+        if(member.getRentalHistory().keySet().size() > 0){
+            for(Object each : member.getRentalHistory().keySet()){
                 output.out(each.toString());
             }
         } else {
@@ -236,19 +462,11 @@ public class Menu {
         this.menuTitle("Add credit | My account | VixFix Store");
         try{
             double amount = input.getDouble("How much credit would you like to add?");
-            user.addCredit(amount);
+            member.addCredit(amount);
         } catch (Exception e){
             output.out("You have entered an invalid value.");
         }
 
-    }
-
-    public void editAccountDetails(){
-        this.menuTitle("Edit account details | My account | VixFix Store");
-        output.out("(1). Change your password");
-        output.out("(3). Change your postal address");
-        output.out("(3). Change your e-email address");
-        output.out("(0). Exit");
     }
 
     public void editPassword(){

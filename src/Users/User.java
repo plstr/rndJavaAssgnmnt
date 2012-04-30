@@ -1,5 +1,6 @@
 package Users;
 
+import java.util.HashMap;
 import java.util.Map;
 import Exceptions.NonUniqueInput;
 
@@ -33,7 +34,7 @@ public abstract class User {
     }
 
     public Map<String, String> getUserInfo(){
-        Map<String, String> userInfo = null;
+        HashMap<String, String> userInfo = new HashMap<String, String>();
         userInfo.put("username", this.username);
         userInfo.put("fullname", this.fullName);
         userInfo.put("email", this.email);

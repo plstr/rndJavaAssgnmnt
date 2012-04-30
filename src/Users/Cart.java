@@ -6,8 +6,8 @@ import Library.*;
 import java.util.HashMap;
 
 public class Cart {
-    private HashMap<DigitalMovie, String> digitalItems;
-    private HashMap<PhysicalMovie, String> physicalItems;
+    private HashMap<DigitalMovie, String> digitalItems = new HashMap<DigitalMovie, String>();
+    private HashMap<PhysicalMovie, String> physicalItems = new HashMap<PhysicalMovie, String>();
     // cart variables
     private Member currentUser;
     private final double purchaseCost = 17.0;
@@ -25,8 +25,16 @@ public class Cart {
         this.currentUser = user;
     }
 
+    public double constRentalCost(){
+        return this.rentalCost;
+    }
+
+    public double constPurchaseCost(){
+        return this.purchaseCost;
+    }
+
     public HashMap getAllItems(){
-        HashMap<Movie, String> allItems = new HashMap();
+        HashMap<Movie, String> allItems = new HashMap<Movie, String>();
         allItems.putAll(digitalItems);
         allItems.putAll(physicalItems);
         return allItems;
@@ -40,7 +48,11 @@ public class Cart {
         return physicalItems;
     }
 
+    public void addDigitalItem(DigitalMovie title, String type){
+        this.digitalItems.put(title, type);
+    }
     public void addItem(Movie title, String type){
+
         if(title instanceof DigitalMovie){
             digitalItems.put((DigitalMovie)title, type);
         }

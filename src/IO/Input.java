@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class Input{
     private Output output = new Output();
+
     public String getString(String message){
         output.outInline(message + " >");
         Scanner scanner = new Scanner(System.in);
@@ -15,19 +16,19 @@ public class Input{
         return scanner.next();
     }
 
-    public Integer getInt() throws Exception{
+    public Integer getInt() throws InvalidInput{
         return toInt(this.getString());
     }
 
-    public Integer getInt(String message) throws Exception{
+    public Integer getInt(String message) throws InvalidInput{
         return toInt(this.getString(message));
     }
 
-    public Double getDouble() throws Exception{
+    public Double getDouble() throws InvalidInput{
         return toDouble(this.getString());
     }
 
-    public Double getDouble(String message) throws Exception{
+    public Double getDouble(String message) throws InvalidInput{
         return toDouble(this.getString(message));
     }
 

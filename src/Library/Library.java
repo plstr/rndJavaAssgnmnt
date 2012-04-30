@@ -20,8 +20,8 @@ public class Library {
     };
 
     // init stores
-    private Map digiMovieLibrary = new HashMap<String, DigitalMovie>();
-    private Map phyMovieLibrary = new HashMap<String, PhysicalMovie>();
+    private Map<String, DigitalMovie> digiMovieLibrary = new HashMap<String, DigitalMovie>();
+    private Map<String, PhysicalMovie> phyMovieLibrary = new HashMap<String, PhysicalMovie>();
 
     public Library() {
         // Repos of all the movies
@@ -59,17 +59,53 @@ public class Library {
 
     public ArrayList<Movie> getPhyMovies(String selection, String filter){
         ArrayList<Movie> results = new ArrayList<Movie>();
+        if(filter.equals("rent")){
+            for(PhysicalMovie each : phyMovieLibrary.values()){
+                if(each.getTitle().matches(".*"+selection+".*") & each.rentable()){
+                    results.add(each);
+                }
+            }
+        } else if(filter.equals("buy")){
+            for(PhysicalMovie each : phyMovieLibrary.values()){
+                if(each.getTitle().matches(".*"+selection+".*") & each.purchasable()){
+                    results.add(each);
+                }
+            }
+        } else {
+            for(PhysicalMovie each : phyMovieLibrary.values()){
+                if(each.getTitle().matches(".*"+selection+".*")){
+                    results.add(each);
+                }
+            }
+        }
         return results;
     }
 
     public ArrayList<Movie> getDigiMovies(String selection, String filter){
         ArrayList<Movie> results = new ArrayList<Movie>();
+        if(filter.equals("rent")){
+            for(DigitalMovie each : digiMovieLibrary.values()){
+                if(each.getTitle().matches(".*"+selection+".*") & each.rentable()){
+                    results.add(each);
+                }
+            }
+        } else if(filter.equals("buy")){
+            for(DigitalMovie each : digiMovieLibrary.values()){
+                if(each.getTitle().matches(".*"+selection+".*") & each.purchasable()){
+                    results.add(each);
+                }
+            }
+        } else {
+            for(DigitalMovie each : digiMovieLibrary.values()){
+                if(each.getTitle().matches(".*"+selection+".*")){
+                    results.add(each);
+                }
+            }
+        }
         return results;
     }
 
-    public void getPhyRented(){
-        // implement
+    public DigitalMovie getDigiTitle(String title){
+        return digiMovieLibrary.get(title);
     }
-
-
 }
