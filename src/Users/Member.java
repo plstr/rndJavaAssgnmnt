@@ -1,11 +1,16 @@
 package Users;
 import Exceptions.InsufficientCredit;
-
+import Users.StoreSettings;
 import java.util.HashMap;
 
 public class Member extends User{
     // extra variables
-    private double credit;
+    StoreSettings settings = new StoreSettings();
+
+    private double credit = 20.0;
+    private double overdueCharged = 0.0;
+    private double overdueFee = settings.getLateFee();
+
     private HashMap purchaseHistory;
     private HashMap rentalHistory;
 
@@ -44,5 +49,11 @@ public class Member extends User{
 
     public HashMap getPurchaseHistory(){
         return this.purchaseHistory;
+    }
+
+    public void chargeOverdueFee(int days){
+        double total = days * this.overdueFee;
+        this.credit -= total;
+        overdueCharged += total;
     }
 }

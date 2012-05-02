@@ -41,4 +41,16 @@ public abstract class User {
         userInfo.put("address", this.address);
         return userInfo;
     }
+
+    public String toString(){
+        return "Username: " + this.username +
+                "\nFull Name: " + this.fullName +
+                "\nE-mail address: " + this.email +
+                "\nPostal address: " + this.address;
+    }
+
+    public boolean checkPassword(String pass){
+        return this.password.equals(pass);
+    }
+
 }

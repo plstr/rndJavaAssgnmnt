@@ -20,14 +20,15 @@ public class Library {
     };
 
     // init stores
-    private Map<String, DigitalMovie> digiMovieLibrary = new HashMap<String, DigitalMovie>();
-    private Map<String, PhysicalMovie> phyMovieLibrary = new HashMap<String, PhysicalMovie>();
+    private Map<Integer, DigitalMovie> digiMovieLibrary = new HashMap<Integer, DigitalMovie>();
+    private Map<Integer, PhysicalMovie> phyMovieLibrary = new HashMap<Integer, PhysicalMovie>();
 
     public Library() {
         // Repos of all the movies
         for (String each : digiMovieList){
             String[] eachMovie = each.split(";");
-            digiMovieLibrary.put(eachMovie[0], new DigitalMovie(eachMovie[0],
+            digiMovieLibrary.put(Integer.parseInt(eachMovie[0]),
+                    new DigitalMovie(Integer.parseInt(eachMovie[0]),
                     eachMovie[1], // Title
                     eachMovie[2], // Director
                     eachMovie[3], // Genre
@@ -43,7 +44,8 @@ public class Library {
 
         for (String each : phyMovieList){
             String[] eachMovie = each.split(";");
-            this.phyMovieLibrary.put(eachMovie[0], new PhysicalMovie(eachMovie[0], // Barcode
+            this.phyMovieLibrary.put(Integer.parseInt(eachMovie[0]),
+                    new PhysicalMovie(Integer.parseInt(eachMovie[0]), // Barcode
                     eachMovie[1], // Title
                     eachMovie[2], // Director
                     eachMovie[3], // Genre
@@ -105,7 +107,76 @@ public class Library {
         return results;
     }
 
-    public DigitalMovie getDigiTitle(String title){
-        return digiMovieLibrary.get(title);
+    public boolean deleteDigiMovie(int id){
+        try{
+            this.digiMovieLibrary.remove(id);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
     }
+
+    public boolean deleteDVDMovie(int barcode){
+        try{
+            this.phyMovieLibrary.remove(barcode);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
+    public void addDigiMovie(String title, String director, String genre,
+                             String year, String length, String cast,
+                             String fileSize, String fileFormat, Boolean bRent,
+                             Boolean bBuy){
+        int newID = this.getDigiID();
+        this.digiMovieLibrary.put(newID, new DigitalMovie(newID, title,
+                director, genre, Integer.parseInt(year),Integer.parseInt(length),
+                cast,Integer.parseInt(fileSize),fileFormat,bRent,bBuy));
+
+    }
+
+    public int getDigiID(){
+        int top = 0;
+        for(int each : digiMovieLibrary.keySet()){
+            if(each > top){
+                top = each;
+            }
+        }
+        return top + 1;
+    }
+
+    public void addDVDMovie(String title, String director, String genre,
+                             String year, String length, String cast,
+                             int quantity, Boolean bRent,
+                             Boolean bBuy){
+        int newBarcode = this.getDVDBarcode();
+        this.phyMovieLibrary.put(newBarcode, new PhysicalMovie(newBarcode, title,
+                director, genre, Integer.parseInt(year),Integer.parseInt(length),
+                cast,quantity,bRent,bBuy));
+
+    }
+
+    public  int getDVDBarcode(){
+        int Min = 10000000;
+        int Max = 99999999;
+        return Min + (int)(Math.random() * ((Max - Min) + 1));
+    }
+
+    public boolean checkDigiMovie(int id){
+        return this.digiMovieLibrary.containsKey(id);
+    }
+
+    public boolean checkDVDMovie(int barcode){
+        return this.phyMovieLibrary.containsKey(barcode);
+    }
+
+    public DigitalMovie getDigiMovie(int id){
+        return this.digiMovieLibrary.get(id);
+    }
+
+    public PhysicalMovie getDVDMovie(int barcode){
+        return this.phyMovieLibrary.get(barcode);
+    }
+
 }

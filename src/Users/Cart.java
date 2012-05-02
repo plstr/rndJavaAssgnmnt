@@ -8,12 +8,13 @@ import java.util.HashMap;
 public class Cart {
     private HashMap<DigitalMovie, String> digitalItems = new HashMap<DigitalMovie, String>();
     private HashMap<PhysicalMovie, String> physicalItems = new HashMap<PhysicalMovie, String>();
-    // cart variables
     private Member currentUser;
-    private final double purchaseCost = 17.0;
-    private final double rentalCost = 5.0;
-    private final double lateFee = 1.0;
-    private final double singleShippingCost = 5.0;
+
+    // default cart variables
+    private double purchaseCost = 17.0;
+    private double rentalCost = 5.0;
+    private double lateFee = 1.0;
+    private double singleShippingCost = 5.0;
 
     private int lateFines = 0;
     private double totalShippingCost;
@@ -21,7 +22,7 @@ public class Cart {
     private double shippingDiscount = 0.0;
     private double cartTotal = 0.0;
 
-    public Cart(Member user){
+    public Cart(Member user, StoreSettings settings){
         this.currentUser = user;
     }
 
@@ -153,5 +154,26 @@ public class Cart {
             // Push to history cart for reference by addToCart function
             // push to accounting
         }
+    }
+
+    public HashMap getAllSettings(){
+        HashMap settings = new HashMap();
+        settings.put("Movie purchase cost", purchaseCost);
+        settings.put("Movie rental cost", rentalCost);
+        settings.put("Shipping flat fee", singleShippingCost);
+
+        return settings;
+    }
+
+    public void setPurchaseCost(double newCost){
+        this.purchaseCost = newCost;
+    }
+
+    public void setRentalCost(double newCost){
+        this.rentalCost = newCost;
+    }
+
+    public void setSingleShippingCost(double newCost){
+        this.singleShippingCost = newCost;
     }
 }

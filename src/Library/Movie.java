@@ -42,4 +42,25 @@ public abstract class Movie {
         return title;
     }
 
+    public String toString(){
+        return this.printAllValues();
+    }
+
+    public void setTitle(String title){
+        this.title = title;
+    }
+
+    public void setDirector(String director){
+        this.director = director;
+    }
+
+    public void setGenre(String genre){
+        this.genre = genre;
+    }
+
+    public void setCast(String cast){
+        this.cast = cast;
+    }
+
+
 }

@@ -5,11 +5,11 @@ package Library;
  */
 public class DigitalMovie extends Movie {
     // extra variables
-    private String mvID;
+    private int mvID;
     private String fileFormat;
     private int fileSize;
 
-    public DigitalMovie(String mvID, String title, String director,
+    public DigitalMovie(int mvID, String title, String director,
                         String genre, int year, int length, String cast,
                         int fileSize, String fileFormat, boolean rent,
                         boolean buy){
@@ -29,5 +29,13 @@ public class DigitalMovie extends Movie {
 
     public void getStatus(){
         // implement
+    }
+
+    public void setFileFormat(String fileFormat){
+        this.fileFormat = fileFormat;
+    }
+
+    public void setFileSize(String fileSize){
+        this.fileSize = Integer.parseInt(fileSize);
     }
 }
