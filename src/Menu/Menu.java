@@ -527,7 +527,7 @@ public class Menu {
     public void adminMenu() {
         // admin menu
         int selection = -1;
-        while (selection != 0){
+        while (authenticated){
             menuTitle("VixFix Store Admin Console");
             output.out("(1). Movies");
             output.out("(2). Users");
@@ -563,6 +563,8 @@ public class Menu {
                     break;
                 case 0:
                     output.out("Thank you.");
+                    output.blankLine();
+                    this.logout();
                     break;
                 default:
                     output.outInline("Please select from the menu.");
@@ -808,21 +810,176 @@ public class Menu {
 
     public void adminUsers(){
         // CRUD users
-        menuTitle("Admin users | VixFix Store Admin Console");
-        output.out("(1). View users");
-        output.out("(2). Edit users");
-        output.out("(3). Delete users");
-        output.out("(0). Exit");
-        output.blankLine();
+        int selection = -1;
+        while (selection != 0){
+            Boolean admin = false;
+            menuTitle("Admin users | VixFix Store Admin Console");
+            output.out("(1). Add member");
+            output.out("(2). Add administrator");
+            output.out("(3). Edit user");
+            output.out("(4). Delete user");
+            output.out("(0). Exit");
+            output.blankLine();
+            try {
+                selection = input.getInt("Please enter selection");
+            } catch (Exception e) {
+                output.out("Invalid selection.");
+            }
+            switch(selection){
+                case 1:
+                    this.addUser(admin);
+                    break;
+                case 2:
+                    admin = true;
+                    this.addUser(admin);
+                    break;
+                case 3:
+                    this.editUser();
+                    break;
+                case 4:
+                    this.deleteUser();
+                    break;
+                case 0:
+                    break;
+                default:
+                    output.outInline("Please select from the menu.");
+            }
+        }
+    }
+
+    public void addUser(Boolean admin){
+        String type = "";
+        String title = "Add user";
+        if(admin){
+            title = "Add administrator";
+        }
+        menuTitle(title + " | Admin users | VixFix Store Admin Console");
+        String uid = input.getString("Enter user ID");
+        String password = input.getString("Enter password");
+        String fullname = input.getString("Enter full name");
+        String email = input.getString("Enter e-mail address");
+        String address = input.getString("Enter postal address");
+        if(admin) {
+            type = input.getString("Enter membership type (standard/premium)");
+        }
+        if(admin){
+            auth.addUser(uid, password, fullname, email, address);
+        } else {
+            auth.addUser(uid, password, fullname, email, address, type);
+        }
+
+    }
+
+    public void editUser(){
+        menuTitle("Edit user | Admin users | VixFix Store Admin Console");
+        String email = input.getString("Enter e-mail address of user you wish to edit");
+        boolean check = auth.isUser(email);
+        if(check){
+            User user = auth.getUser(email);
+            output.out(user.toString());
+            int selection = -1;
+            while (selection != 0){
+                menuTitle("Edit user | Admin users | VixFix Store Admin Console");
+                output.out("(1). Edit e-mail address");
+                output.out("(2). Edit password");
+                output.out("(3). Edit address");
+                output.out("(4). Edit full name");
+                output.out("(0). Exit");
+                output.blankLine();
+                try {
+                    selection = input.getInt("Please enter selection");
+                } catch (Exception e) {
+                    output.out("Invalid selection.");
+                }
+                switch(selection){
+                    case 1:
+                        String newEmail = input.getString("Enter new e-mail address");
+                        user.setAddress(newEmail);
+                        break;
+                    case 2:
+                        String password = input.getString("Enter new password");
+                        user.setPassword(password);
+                        break;
+                    case 3:
+                        String address = input.getString("Enter new address");
+                        user.setAddress(address);
+                        break;
+                    case 4:
+                        String fullname = input.getString("Enter new full name");
+                        user.setFullName(fullname);
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        output.outInline("Please select from the menu.");
+                }
+            }
+
+        } else {
+            output.out("No user with email: " + email + " found in system.");
+        }
+    }
+
+    public void deleteUser(){
+        menuTitle("Delete user | Admin users | VixFix Store Admin Console");
+        String email = input.getString("Enter email of user you wish to delete");
+        boolean check = auth.deleteUser(email);
+        if(check){
+            output.out("User - \"" + email + "\" successfully deleted.");
+        } else {
+            output.out("No user with e-mail: " + email + " found in system.");
+        }
     }
 
     public void adminRentals(){
-        // CRUD rentals
-        menuTitle("Admin rentals | VixFix Store Admin Console");
-        output.out("(1). View rentals");
-        output.out("(2). Process rental returns");
-        output.out("(0). Exit");
-        output.blankLine();
+        int selection = -1;
+        while (selection != 0){
+            menuTitle("Admin rentals | VixFix Store Admin Console");
+            output.out("(1). View rentals");
+            output.out("(2). Process DVD rental return");
+            output.out("(0). Exit");
+            output.blankLine();
+            try {
+                selection = input.getInt("Please enter selection");
+            } catch (Exception e) {
+                output.out("Invalid selection.");
+            }
+            switch(selection){
+                case 1:
+                    this.viewCurrentRentals();
+                    break;
+                case 2:
+                    this.processReturns();
+                    break;
+                case 0:
+                    break;
+                default:
+                    output.outInline("Please select from the menu.");
+            }
+        }
+    }
+
+    public void viewCurrentRentals(){
+        menuTitle("Current rentals | Admin rentals | VixFix Store Admin Console");
+        Map digiRentals = library.getDigiRentals();
+        Map DVDRentals = library.getDVDRentals();
+
+
+    }
+
+    public void processReturns(){
+        menuTitle("Process returns | Admin rentals | VixFix Store Admin Console");
+        try{
+            int barcode = input.getInt("Enter barcode of DVD return");
+            if(library.checkDVDMovie(barcode)){
+                int daysLate = input.getInt("Enter number of late days");
+                library.returnDVDRental(barcode, daysLate);
+            } else {
+                output.out("No such barcode found in library.");
+            }
+        } catch (InvalidInput e){
+            output.out("Invalid barcode entered.");
+        }
     }
 
     public void collectFees(){
@@ -835,6 +992,10 @@ public class Menu {
 
     public void viewStats(){
         menuTitle("View stats | VixFix Store Admin Console");
+        output.out("(1). View rentals");
+        output.out("(2). Process rental returns");
+        output.out("(0). Exit");
+        output.blankLine();
     }
 
     public void settingsMenu(){

@@ -33,6 +33,10 @@ public abstract class User {
         this.address = newAddress;
     }
 
+    public void setFullName(String fullname){
+        this.fullName = fullname;
+    }
+
     public Map<String, String> getUserInfo(){
         HashMap<String, String> userInfo = new HashMap<String, String>();
         userInfo.put("username", this.username);

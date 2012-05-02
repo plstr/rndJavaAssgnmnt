@@ -10,6 +10,9 @@ public abstract class Movie {
     private String cast;
     private Boolean rent;
     private Boolean buy;
+
+    private int rentCount = 0;
+    private int purchaseCount = 0;
     
     public Movie (String title, String director, String genre,
            int year, int length, String cast, Boolean rent, Boolean buy) {
@@ -29,6 +32,7 @@ public abstract class Movie {
                + genre + "\t "
                + year;
     }
+
 
     public boolean rentable(){
         return this.rent;
@@ -60,6 +64,19 @@ public abstract class Movie {
 
     public void setCast(String cast){
         this.cast = cast;
+    }
+
+    public void increaseRentCount(){
+        this.rentCount += 1;
+    }
+
+    public void increasePurchaseCount() {
+        this.purchaseCount += 1;
+    }
+
+    public String getStats(){
+        return "Rental count: " + this.rentCount +
+                "Purchase count: " + this.purchaseCount;
     }
 
 

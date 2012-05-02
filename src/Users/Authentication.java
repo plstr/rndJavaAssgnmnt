@@ -67,17 +67,34 @@ public class Authentication {
         }
     }
 
-    public void addUser(String uid, String username, String password, String fullname,
+    public void addUser(String uid, String password, String fullname,
                         String email, String address){
         this.userDB.put(email, new Admin(uid, password, fullname, email, address));
     }
 
-    public void addUser(String uid, String username, String password, String fullname,
+    public void addUser(String uid, String password, String fullname,
                         String email, String address, String type){
         if(type.equals("premium")){
             this.userDB.put(email, new PremiumMember(uid, password, fullname, email, address));
         } else {
             this.userDB.put(email, new Member(uid, password, fullname, email, address));
+        }
+    }
+
+    public boolean isUser(String email){
+        return this.userDB.containsKey(email);
+    }
+
+    public User getUser(String email){
+        return (User)this.userDB.get(email);
+    }
+
+    public boolean deleteUser(String email){
+        if (isUser(email)){
+            this.userDB.remove(email);
+            return true;
+        } else {
+            return false;
         }
     }
 }

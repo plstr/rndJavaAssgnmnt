@@ -23,6 +23,9 @@ public class Library {
     private Map<Integer, DigitalMovie> digiMovieLibrary = new HashMap<Integer, DigitalMovie>();
     private Map<Integer, PhysicalMovie> phyMovieLibrary = new HashMap<Integer, PhysicalMovie>();
 
+    private Map currentDigiRentals = new HashMap();
+    private Map currentDVDRentals = new HashMap();
+
     public Library() {
         // Repos of all the movies
         for (String each : digiMovieList){
@@ -177,6 +180,26 @@ public class Library {
 
     public PhysicalMovie getDVDMovie(int barcode){
         return this.phyMovieLibrary.get(barcode);
+    }
+
+    public boolean addDigiRental(int id, String user){
+        if(this.checkDigiMovie(id)){
+            this.currentDigiRentals.put("currentdate" + id, user);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public Map getDigiRentals(){
+        return this.currentDigiRentals;
+    }
+
+    public void returnDigiRental(int id, String user){
+        if(this.currentDigiRentals.containsKey(id) &&
+                this.currentDigiRentals.get(id).equals(user)){
+            // do stuff
+        }
     }
 
 }
