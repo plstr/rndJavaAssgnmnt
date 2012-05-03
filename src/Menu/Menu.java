@@ -27,6 +27,7 @@ public class Menu {
     final Output output = new Output();
 
     private ArrayList<Movie> tempResults = new ArrayList<Movie>();
+    private ArrayList<PhysicalMovie> tempDVDResults = new ArrayList<PhysicalMovie>();
     
     public Menu(){
         output.out("Initialising store...");
@@ -150,12 +151,15 @@ public class Menu {
             int count = 1;
             for(Object each : userCart.getDigitalItems().keySet()){
                 if(userCart.getDigitalItems().get(each).equals("rent")){
-                    output.out(count++ + " " + each.toString() + ": " + userCart.constRentalCost());
+                    output.out(count++ + " " + each.toString() + ": " +
+                            userCart.constRentalCost());
                 } else {
-                    output.out(userCart.getDigitalItems().get(each).toString());
+                    output.out(count++ + " " + each.toString() + ": " +
+                            userCart.constPurchaseCost());
                 }
             }
-            output.out("Digital total: ");
+            output.out("Digital total: " + (userCart.getDigiPurchaseCost() +
+                    userCart.getDigiRentalCost()));
         } else {
             output.out("No digital items in cart.");
         }
@@ -166,15 +170,18 @@ public class Menu {
             for(Object each : userCart.getPhysicalItems().keySet()){
                 output.out(count++ + " " + each.toString() + ": " + userCart.constPurchaseCost());
             }
+            output.out("DVD movies total: " + (userCart.getPhyPurchaseCost() +
+                    userCart.getPhyRentalCost()));
         } else {
             output.out("No DVD titles items in cart.");
         }
-
+        output.out("Shipping cost: " + userCart.getTotalShippingCost());
+        output.out("Cart total: " + userCart.getTotalCost());
+        output.blankLine();
         Integer selection = 9;
+        output.blankLine();
         output.out("(1). Checkout cart");
-        output.out("(2). Remove a digital item");
-        output.out("(3). Remove a DVD item");
-        output.out("(4). Reset cart");
+        output.out("(2). Reset cart");
         output.out("(0). Exit");
         while(selection != 0){
             try {
@@ -188,13 +195,7 @@ public class Menu {
                     this.checkOut();
                     break;
                 case 2:
-                    this.cartRemoveDigi();
-                    break;
-                case 3:
-//                    this.cartRemoveDVD();
-                    break;
-                case 4:
-//                    this.cartReset();
+                    this.cartReset();
                     break;
                 case 0:
                     break;
@@ -204,23 +205,9 @@ public class Menu {
         }
     }
 
-    public void cartRemoveDigi(){
-        if(userCart.getDigitalItems().size() > 0){
-            int selection = Integer.MAX_VALUE;
-            while(!(selection <= userCart.getDigitalItems().size())){
-                try {
-                    selection = input.getInt("Please select item to remove");
-                } catch (Exception e) {
-                    output.out("Invalid input. Please try again.");
-                    selection = -1;
-                }
-//                userCart.removeItem(userCart.getDigitalItems().keySet()[select]);
-            }
-
-
-        } else {
-            output.out("No digital items in cart.");
-        }
+    public void cartReset(){
+        userCart.clear();
+        output.out("Your shopping cart has been reset.");
     }
 
     private void digiRent(){
@@ -274,22 +261,28 @@ public class Menu {
     private void DVD_Rent(){
         String search;
         search = input.getString("Search for movie title");
-        this.tempResults = library.getPhyMovies(search, "rent");
-        if(tempResults.size() > 0){
+        this.tempDVDResults = library.getPhyMovies(search, "rent");
+        if(tempDVDResults.size() > 0){
             int counter = 1;
             int selection = Integer.MAX_VALUE;
-            for(Movie each : tempResults){
-                output.out("(" + counter++ + ") " + each.getTitle());
+            for(PhysicalMovie each : tempDVDResults){
+                output.out("(" + counter++ + ") " + each.getTitle() + each.checkAvailability());
             }
-            while(!(selection <= tempResults.size() - 1)){
+            while(!(selection <= tempDVDResults.size() - 1)){
                 try{
                     selection = input.getInt("Select DVD title you wish to rent");
                 } catch (InvalidInput e){
                     output.out("Invalid selection.");
                 }
             }
-            userCart.addItem(tempResults.get(selection), "rent");
-            output.out("\"" + tempResults.get(selection).getTitle() + "\" added to cart");
+            PhysicalMovie movie = tempDVDResults.get(selection);
+            if(movie.getQuantity() > 0){
+                userCart.addItem(tempDVDResults.get(selection), "rent");
+                output.out("\"" + tempDVDResults.get(selection).getTitle() + "\" added to cart");
+            } else {
+                output.out("Sorry, requested item is currently out of stock.");
+            }
+
         } else{
             output.out("No matching movies found. :(");
         }
@@ -298,22 +291,22 @@ public class Menu {
     private void DVD_Buy(){
         String search;
         search = input.getString("Search for movie title");
-        this.tempResults = library.getPhyMovies(search, "buy");
-        if(tempResults.size() > 0){
+        this.tempDVDResults = library.getPhyMovies(search, "buy");
+        if(tempDVDResults.size() > 0){
             int counter = 1;
             int selection = Integer.MAX_VALUE;
-            for(Movie each : tempResults){
+            for(PhysicalMovie each : tempDVDResults){
                 output.out("(" + counter++ + ") " + each.getTitle());
             }
-            while(!(selection <= tempResults.size() - 1)){
+            while(!(selection <= tempDVDResults.size() - 1)){
                 try{
                     selection = input.getInt("Select DVD title you wish to purchase");
                 } catch (InvalidInput e){
                     output.out("Invalid selection.");
                 }
             }
-            userCart.addItem(tempResults.get(selection), "buy");
-            output.out("\"" + tempResults.get(selection).getTitle() + "\" added to cart");
+            userCart.addItem(tempDVDResults.get(selection), "buy");
+            output.out("\"" + tempDVDResults.get(selection).getTitle() + "\" added to cart");
         } else{
             output.out("No matching movies found. :(");
         }
@@ -322,7 +315,7 @@ public class Menu {
     public void checkOut(){
         try{
             userCart.checkout();
-            // stats collection
+            // general stats collection
             if(userCart.getPhyPurchaseCost() > 0.0){
                 systemAccount.addPhyPurchases(userCart.getPhyPurchaseCost());
             }
@@ -335,8 +328,34 @@ public class Menu {
             if(userCart.getDigiPurchaseCost() > 0.0){
                 systemAccount.addDigitalPurchases(userCart.getDigiPurchaseCost());
             }
+            Map digitalItems = userCart.getDigitalItems();
+            for(Object each : digitalItems.keySet()){
+                DigitalMovie movie = (DigitalMovie)each;
+                if(digitalItems.get(each).equals("rent")){
+                    movie.increaseRentCount();
+                    library.addDigiRental(movie.getID(), user.getUID());
+                } else if(digitalItems.get(each).equals("buy")){
+                    movie.increasePurchaseCount();
+                }
+            }
+
+            Map DVDItems = userCart.getPhysicalItems();
+            for(Object each : DVDItems.keySet()){
+                PhysicalMovie movie = (PhysicalMovie)each;
+                if(DVDItems.get(each).equals("rent")){
+                    movie.increaseRentCount();
+                    movie.decreaseQuantity();
+                    library.addDigiRental(movie.getBarcode(), user.getUID());
+                } else if(DVDItems.get(each).equals("buy")){
+                    movie.increasePurchaseCount();
+                    movie.decreaseQuantity();
+                }
+            }
             // clear cart
+            member.deductCredit(userCart.getTotalCost());
             userCart.removeAllItems();
+            output.out("Thank you, your purchase has been successful.");
+            output.blankLine();
         } catch (InsufficientCredit e){
             output.out("Insufficient funds. Please add credit to continue.");
         }
@@ -350,6 +369,7 @@ public class Menu {
         output.out("Account ID: " + member.getUserInfo().get("username"));
         output.out("E-mail: " + member.getUserInfo().get("email"));
         output.out("Postal address: " + member.getUserInfo().get("address"));
+        output.out("Current balance: " + member.getCredit());
         output.line();
         output.out("(1). View current rentals");
         output.out("(2). Return digital rentals");
@@ -427,21 +447,21 @@ public class Menu {
 
     public void viewAllRentals(){
         this.menuTitle("Current rentals | My account | VixFix Store");
-        output.out("Digital rentals");
+        output.out("[Digital rentals]");
         output.line();
-        if(userCart.getDigitalItems().keySet().size() > 0){
+        if(member.getCurrentDigiRentals().size() > 0){
             int count = 1;
-            for(Object each : userCart.getDigitalItems().keySet()){
+            for(Object each : member.getCurrentDigiRentals()){
                 output.out(count++ + " " + each.toString());
             }
         } else {
             output.out("No current rentals found.");
         }
-        output.out("DVD rentals");
+        output.out("[DVD rentals]");
         output.line();
-        if(userCart.getPhysicalItems().keySet().size() > 0){
+        if(member.getCurrentDVDRentals().size() > 0){
             int count = 1;
-            for(Object each : userCart.getPhysicalItems().keySet()){
+            for(Object each : member.getCurrentDVDRentals()){
                 output.out(count++ + " " + each.toString());
             }
         } else {
@@ -984,19 +1004,54 @@ public class Menu {
 
     public void collectFees(){
         menuTitle("Collect membership fees | VixFix Store Admin Console");
-        double collected = 0;
-        // collection functionality
+        double collected = auth.deductPremiumFees();
         output.out("" + collected + " has been collected in membership fees.");
         output.blankLine();
     }
 
     public void viewStats(){
-        menuTitle("View stats | VixFix Store Admin Console");
-        output.out("(1). View rentals");
-        output.out("(2). Process rental returns");
-        output.out("(0). Exit");
-        output.blankLine();
+        int selection = -1;
+        while (selection != 0){
+            menuTitle("View stats | VixFix Store Admin Console");
+            output.out("(1). View store account");
+            output.out("(2). View individual movie stats");
+            output.out("(0). Exit");
+            output.blankLine();
+            try {
+                selection = input.getInt("Please enter selection");
+            } catch (Exception e) {
+                output.out("Invalid selection.");
+            }
+            switch(selection){
+                case 1:
+                    this.viewStoreAccount();
+                    break;
+                case 2:
+                    this.viewMovieStats();
+                    break;
+                case 0:
+                    break;
+                default:
+                    output.outInline("Please select from the menu.");
+            }
+        }
     }
+
+    public void viewStoreAccount(){
+        menuTitle("View store account | View stats | VixFix Store Admin Console");
+        output.out(systemAccount.toString());
+    }
+
+    public void viewMovieStats(){
+        menuTitle("Movie stats | View stats | VixFix Store Admin Console");
+        try{
+            Movie movie = this.library.getDVDMovie(input.getInt("Enter movie barcode"));
+            output.out(movie.getStats());
+        } catch (InvalidInput e){
+            output.out("Invalid input.");
+        }
+    }
+
 
     public void settingsMenu(){
         int selection = -1;

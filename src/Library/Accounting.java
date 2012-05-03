@@ -57,4 +57,12 @@ public class Accounting {
         total += this.feesCollected;
         return total;
     }
+
+    public String toString(){
+        return "Digital purchases: " + this.digitalPurchases +
+                "\nDigital rentals: " + this.digitalRentals +
+                "\nPhysical purchases: " + this.phyPurchases +
+                "\nPhysical rentals: " + this.phyRentals +
+                "\nCollected member fees: " + this.feesCollected;
+    }
 }

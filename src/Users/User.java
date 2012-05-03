@@ -57,4 +57,8 @@ public abstract class User {
         return this.password.equals(pass);
     }
 
+    public String getUID(){
+        return this.username;
+    }
+
 }

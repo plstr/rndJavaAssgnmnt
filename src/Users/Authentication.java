@@ -1,5 +1,6 @@
 package Users;
 
+import Exceptions.InsufficientCredit;
 import Exceptions.InvalidLogin;
 import java.util.Map;
 import java.util.HashMap;
@@ -96,5 +97,20 @@ public class Authentication {
         } else {
             return false;
         }
+    }
+
+    public double deductPremiumFees(){
+        double total = 0.0;
+        for(Object each : userDB.values()){
+            if(each instanceof PremiumMember){
+                try{
+                 ((PremiumMember) each).deductCredit(5.0);
+                } catch (InsufficientCredit e){
+                    System.out.println(((PremiumMember) each).getUID() + "Not enough credit.");
+                }
+            }
+
+        }
+        return total;
     }
 }

@@ -38,4 +38,7 @@ public class DigitalMovie extends Movie {
     public void setFileSize(String fileSize){
         this.fileSize = Integer.parseInt(fileSize);
     }
+    public int getID(){
+        return this.mvID;
+    }
 }

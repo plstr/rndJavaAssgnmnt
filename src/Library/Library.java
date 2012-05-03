@@ -10,13 +10,18 @@ public class Library {
     private String[] digiMovieList = new String[]{
         // id | title | director | genre | year | length | cast | size | format | digi_rent | digi_buy
         "00000001;The Matrix;Wachowski Brothers;Sci-Fi,Adventure;1998;120;Addy Ze, Kake Face;512;divX;true;true",
-        "00000002;Star Trek;J.J. Abrams;Sci-Fi,Drama,Romance;2009;120;Addy Ze, Kake Face;512;divX;true;true"
+        "00000002;Star Trek;J.J. Abrams;Sci-Fi,Drama,Romance;2009;120;Addy Ze, Kake Face;512;divX;true;true",
+        "00000003;The Avengers;Joss Whedon;Action,Fantasy;2012;142;Robert Downey Jr.;832;xvid;true;true"
     };
 
     private String[] phyMovieList = new String[]{
             // barcode | title | director | genre | year | length | cast | qnt | phy_rent | phy_buy
-            "12321323;The Matrix;Wachowski Brothers;Sci-Fi,Adventure;1998;120;Bobby Dee, Andrew Bob;2;true;false",
-            "12321321;Star Trek;J.J. Abrams;Sci-Fi,Drama,Romance;2009;120;Bobby Dee, Andrew Bob;2;true;false"
+            "12321323;The Matrix Reloaded;Wachowski Brothers;Sci-Fi,Adventure;1998;120;Bobby Dee, Andrew Bob;2;true;false",
+            "12321321;Star Trek Generations;J.J. Abrams;Sci-Fi,Drama,Romance;2009;120;Tony Lau, Andrew Bob;2;true;true",
+            "12312333;The Hunger Games;Gary Ross;Action;2012;130;Jennifer Lawrence;1;true;true",
+            "12312381;The Descendants;Alexander Payne;Action;2011;152;George Clooney;1;true;true",
+            "13331111;Shame;Steve McQueen;Drama;2011;110;Michael Fassbender;3;true;true",
+            "10100101;Hugo;Martin Scorsese;Comedy;2011;130;Asa Butterfield;2;true;true"
     };
 
     // init stores
@@ -62,8 +67,8 @@ public class Library {
         }
     }
 
-    public ArrayList<Movie> getPhyMovies(String selection, String filter){
-        ArrayList<Movie> results = new ArrayList<Movie>();
+    public ArrayList<PhysicalMovie> getPhyMovies(String selection, String filter){
+        ArrayList<PhysicalMovie> results = new ArrayList<PhysicalMovie>();
         if(filter.equals("rent")){
             for(PhysicalMovie each : phyMovieLibrary.values()){
                 if(each.getTitle().matches(".*"+selection+".*") & each.rentable()){
@@ -195,9 +200,19 @@ public class Library {
         return this.currentDigiRentals;
     }
 
+    public Map getDVDRentals(){
+        return this.currentDVDRentals;
+    }
+
     public void returnDigiRental(int id, String user){
         if(this.currentDigiRentals.containsKey(id) &&
                 this.currentDigiRentals.get(id).equals(user)){
+            // do stuff
+        }
+    }
+
+    public void returnDVDRental(int barcode, int day){
+        if(this.currentDVDRentals.containsKey(barcode)){
             // do stuff
         }
     }

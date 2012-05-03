@@ -6,24 +6,29 @@ import Library.*;
 import java.util.HashMap;
 
 public class Cart {
-    private HashMap<DigitalMovie, String> digitalItems = new HashMap<DigitalMovie, String>();
-    private HashMap<PhysicalMovie, String> physicalItems = new HashMap<PhysicalMovie, String>();
-    private Member currentUser;
+    HashMap<DigitalMovie, String> digitalItems = new HashMap<DigitalMovie, String>();
+    HashMap<PhysicalMovie, String> physicalItems = new HashMap<PhysicalMovie, String>();
+    protected Member currentUser;
 
     // default cart variables
-    private double purchaseCost = 17.0;
+    double purchaseCost = 17.0;
     private double rentalCost = 5.0;
     private double lateFee = 1.0;
-    private double singleShippingCost = 5.0;
+    protected double singleShippingCost = 5.0;
 
     private int lateFines = 0;
-    private double totalShippingCost;
+    protected double totalShippingCost;
     private double purchaseDiscount = 0.0;
     private double shippingDiscount = 0.0;
     private double cartTotal = 0.0;
 
     public Cart(Member user, StoreSettings settings){
         this.currentUser = user;
+    }
+
+    public void clear(){
+        digitalItems.clear();
+        physicalItems.clear();
     }
 
     public double constRentalCost(){
@@ -62,22 +67,24 @@ public class Cart {
         }
     }
 
-    private void calculateShipping(){
+    public void calculateShipping(){
         int items = physicalItems.size();
         int packages;
-        if(items > 3){
+        if(items == 0){
+            packages = 0;
+        } else if(items > 3){
             packages = items / 3;
             if(items % 3 != 0){
                 packages += 1;
             }
-        } else {
+            } else {
             packages = 1;
         }
         this.totalShippingCost = this.singleShippingCost * packages;
     }
 
     public double getTotalShippingCost(){
-        this.calculateShipping();
+        calculateShipping();
         return this.totalShippingCost;
     }
 
@@ -125,6 +132,8 @@ public class Cart {
         double total = 0.0;
         total += getPhyPurchaseCost();
         total += getPhyRentalCost();
+        total += getDigiPurchaseCost();
+        total += getDigiRentalCost();
         total += getTotalShippingCost();
         this.cartTotal = total;
 
@@ -150,9 +159,7 @@ public class Cart {
         if(this.cartTotal > currentUser.getCredit()){
             throw new InsufficientCredit();
         } else {
-            currentUser.deductCredit(this.cartTotal);
-            // Push to history cart for reference by addToCart function
-            // push to accounting
+            // nothing
         }
     }
 

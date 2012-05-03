@@ -24,4 +24,29 @@ public class PhysicalMovie extends Movie {
     public void setWeight(String weight){
         this.weight = Integer.parseInt(weight);
     }
+
+    public int getBarcode(){
+        return this.barcode;
+    }
+
+    public void decreaseQuantity(){
+        this.qnt -= 1;
+    }
+
+    public void increaseQuantity(){
+        this.qnt += 1;
+    }
+
+    public int getQuantity(){
+        return this.qnt;
+    }
+
+    public String checkAvailability(){
+        if(this.qnt > 0){
+            return "\t[in stock]";
+        } else {
+            return "\t[out of stock]";
+        }
+
+    }
 }
